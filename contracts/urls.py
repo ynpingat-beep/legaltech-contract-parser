@@ -2,5 +2,5 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.home),
+    path('api/upload/', views.upload_contract, name='upload-contract'),
 ]
