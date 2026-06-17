@@ -1,4 +1,4 @@
-import fitz  # PyMuPDF
+import fitz
 
 def extract_text_from_pdf(pdf_path):
     text = ""
@@ -9,5 +9,9 @@ def extract_text_from_pdf(pdf_path):
         text += page.get_text()
 
     pdf_document.close()
+
+    # Text Cleaning
+    text = text.replace("\n", " ")
+    text = " ".join(text.split())
 
     return text
