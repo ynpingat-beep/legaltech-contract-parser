@@ -1,5 +1,8 @@
 from django.http import HttpResponse
 
+from django.shortcuts import render, redirect
+from .models import Contract
+
 def home(request):
     return HttpResponse("Contracts App Working!")
 
@@ -23,3 +26,63 @@ def upload_contract(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+def home(request):
+
+    return render(
+        request,
+        'contracts/home.html'
+    )
+
+
+def upload_page(request):
+
+    if request.method == 'POST':
+
+        title = request.POST.get('title')
+
+        uploaded_file = request.FILES.get(
+            'uploaded_file'
+        )
+
+        Contract.objects.create(
+            title=title,
+            uploaded_file=uploaded_file
+        )
+
+        return redirect('/contracts/')
+
+    return render(
+        request,
+        'contracts/upload.html'
+    )
+
+
+
+def contract_list(request):
+
+    contracts = Contract.objects.all()
+
+    return render(
+        request,
+        'contracts/contract_list.html',
+        {
+            'contracts': contracts
+        }
+    )
+
+
+def contract_detail(request, contract_id):
+
+    contract = Contract.objects.get(
+        id=contract_id
+    )
+
+    return render(
+        request,
+        'contracts/contract_detail.html',
+        {
+            'contract': contract
+        }
+    )
