@@ -11,6 +11,13 @@
 
     <h2 class="mb-4">📑 Uploaded Contracts</h2>
 
+    <div class="alert alert-info">
+
+    Total Contracts:
+    <strong>{{ contracts.count }}</strong>
+
+    </div>
+
     <div class="row">
 
         {% for contract in contracts %}
@@ -23,8 +30,12 @@
 
                     <h5>{{ contract.title }}</h5>
 
+                    <span class="badge bg-success">
+                        Processed
+                    </span>
+
                     <p class="text-muted">
-                        Uploaded: {{ contract.uploaded_at }}
+                        Uploaded: {{ contract.uploaded_at|date:"d M Y, H:i" }}
                     </p>
 
                     <a href="/contracts/{{ contract.id }}/"

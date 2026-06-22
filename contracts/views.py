@@ -30,11 +30,20 @@ def upload_contract(request):
 
 def home(request):
 
+    total_contracts = Contract.objects.count()
+
+    latest_contract = Contract.objects.order_by(
+        '-uploaded_at'
+    ).first()
+
     return render(
         request,
-        'contracts/home.html'
+        'contracts/home.html',
+        {
+            'total_contracts': total_contracts,
+            'latest_contract': latest_contract
+        }
     )
-
 
 def upload_page(request):
 
