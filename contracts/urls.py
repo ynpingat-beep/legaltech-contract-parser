@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import*
 
 urlpatterns = [
     path('api/upload/', views.upload_contract, name='upload-contract'),
@@ -16,21 +17,48 @@ from .views import (
 
 urlpatterns = [
 
-    path('', home),
+    path(
+        '',
+        home,
+        name='home'
+    ),
 
     path(
         'upload/',
-        upload_page
+        upload_page,
+        name='upload_page'
     ),
 
     path(
         'contracts/',
-        contract_list
+        contract_list,
+        name='contract_list'
     ),
 
     path(
         'contracts/<int:contract_id>/',
-        contract_detail
+        contract_detail,
+        name='contract_detail'
+    ),
+
+    path(
+        'delete/<int:pk>/',
+        delete_contract,
+        name='delete_contract'
     ),
 
 ]
+
+
+
+path(
+    'delete/<int:pk>/',
+    delete_contract,
+    name='delete_contract'
+)
+
+path(
+    'contracts/<int:pk>/',
+    views.contract_detail,
+    name='contract_detail'
+),
