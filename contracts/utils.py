@@ -1,5 +1,10 @@
 import fitz
 
+import spacy
+
+# Load spaCy English model
+nlp = spacy.load("en_core_web_sm")
+
 def extract_text_from_pdf(pdf_path):
     text = ""
 
