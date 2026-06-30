@@ -1,4 +1,4 @@
-import fitz, spacy
+import fitz, spacy, re 
 
 
 # Load spaCy English model
@@ -42,3 +42,18 @@ def extract_entities(text):
         "organizations": sorted(list(organizations)),
         "dates": sorted(list(dates))
     }
+
+
+def extract_governing_law(text):
+    """
+    Extract the governing law from contract text.
+    """
+
+    pattern = r"governed by the laws of ([A-Za-z ]+)"
+
+    match = re.search(pattern, text, re.IGNORECASE)
+
+    if match:
+        return match.group(1).strip()
+
+    return None

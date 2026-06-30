@@ -1,5 +1,9 @@
 from django.db import models
-from .utils import extract_text_from_pdf, extract_entities
+from .utils import (
+    extract_text_from_pdf,
+    extract_entities,
+    extract_governing_law
+)
 
 
 class Contract(models.Model):
@@ -10,36 +14,35 @@ class Contract(models.Model):
 
     def save(self, *args, **kwargs):
 
-        # Save contract first to generate file path
+        # Save contract first
         super().save(*args, **kwargs)
 
-        # Process only if text hasn't been extracted yet
+        # Process only once
         if self.uploaded_file and not self.extracted_text:
 
             try:
-                # -----------------------------
-                # Extract text from PDF
-                # -----------------------------
+
+                # --------------------------------
+                # Extract Text
+                # --------------------------------
                 self.extracted_text = extract_text_from_pdf(
                     self.uploaded_file.path
                 )
 
                 super().save(update_fields=["extracted_text"])
 
-                # -----------------------------
-                # Extract Organizations & Dates
-                # -----------------------------
-                entities = extract_entities(self.extracted_text)
-                print("=" * 50)
-                print("Extracted Entities:", entities)
-                print("=" * 50)
-
-                # Remove previous extracted clauses (safety)
+                # --------------------------------
+                # Remove old extracted clauses
+                # --------------------------------
                 self.clauses.all().delete()
+
+                # --------------------------------
+                # Extract Organizations & Dates
+                # --------------------------------
+                entities = extract_entities(self.extracted_text)
 
                 # Save Organizations
                 for organization in entities["organizations"]:
-                    print("Saving Organization:", organization)
 
                     ExtractedClause.objects.create(
                         contract=self,
@@ -49,12 +52,26 @@ class Contract(models.Model):
 
                 # Save Dates
                 for date in entities["dates"]:
-                    print("Saving Date:", date)
 
                     ExtractedClause.objects.create(
                         contract=self,
                         clause_type="Date",
                         clause_text=date
+                    )
+
+                # --------------------------------
+                # Extract Governing Law
+                # --------------------------------
+                governing_law = extract_governing_law(
+                    self.extracted_text
+                )
+
+                if governing_law:
+
+                    ExtractedClause.objects.create(
+                        contract=self,
+                        clause_type="Governing Law",
+                        clause_text=governing_law
                     )
 
             except Exception as e:
