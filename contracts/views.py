@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Contract
+from .models import Contract, ExtractedClause
 
 def home(request):
     return HttpResponse("Contracts App Working!")
@@ -88,14 +88,25 @@ def contract_detail(request, contract_id):
         id=contract_id
     )
 
+    organizations = ExtractedClause.objects.filter(
+        contract=contract,
+        clause_type="Organization"
+    )
+
+    dates = ExtractedClause.objects.filter(
+        contract=contract,
+        clause_type="Date"
+    )
+
     return render(
         request,
         'contracts/contract_detail.html',
         {
-            'contract': contract
+            'contract': contract,
+            'organizations': organizations,
+            'dates': dates
         }
     )
-
 
 def delete_contract(request, pk):
 

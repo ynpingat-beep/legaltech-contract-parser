@@ -30,12 +30,16 @@ class Contract(models.Model):
                 # Extract Organizations & Dates
                 # -----------------------------
                 entities = extract_entities(self.extracted_text)
+                print("=" * 50)
+                print("Extracted Entities:", entities)
+                print("=" * 50)
 
                 # Remove previous extracted clauses (safety)
                 self.clauses.all().delete()
 
                 # Save Organizations
                 for organization in entities["organizations"]:
+                    print("Saving Organization:", organization)
 
                     ExtractedClause.objects.create(
                         contract=self,
@@ -45,6 +49,7 @@ class Contract(models.Model):
 
                 # Save Dates
                 for date in entities["dates"]:
+                    print("Saving Date:", date)
 
                     ExtractedClause.objects.create(
                         contract=self,
