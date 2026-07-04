@@ -3,7 +3,8 @@ from .utils import (
     extract_text_from_pdf,
     extract_entities,
     extract_governing_law,
-    detect_risks
+    detect_risks,
+    categorize_clauses
 )
 
 
@@ -15,35 +16,32 @@ class Contract(models.Model):
 
     def save(self, *args, **kwargs):
 
-        # Save contract first
         super().save(*args, **kwargs)
 
-        # Process only once
         if self.uploaded_file and not self.extracted_text:
 
             try:
 
-                # --------------------------------
+                # -----------------------------
                 # Extract Text
-                # --------------------------------
+                # -----------------------------
                 self.extracted_text = extract_text_from_pdf(
                     self.uploaded_file.path
                 )
 
                 super().save(update_fields=["extracted_text"])
 
-                # --------------------------------
-                # Remove old extracted data
-                # --------------------------------
+                # -----------------------------
+                # Remove previous extracted data
+                # -----------------------------
                 self.clauses.all().delete()
                 self.risks.all().delete()
 
-                # --------------------------------
+                # -----------------------------
                 # Extract Organizations & Dates
-                # --------------------------------
+                # -----------------------------
                 entities = extract_entities(self.extracted_text)
 
-                # Save Organizations
                 for organization in entities["organizations"]:
 
                     ExtractedClause.objects.create(
@@ -52,7 +50,6 @@ class Contract(models.Model):
                         clause_text=organization
                     )
 
-                # Save Dates
                 for date in entities["dates"]:
 
                     ExtractedClause.objects.create(
@@ -61,9 +58,9 @@ class Contract(models.Model):
                         clause_text=date
                     )
 
-                # --------------------------------
-                # Extract Governing Law
-                # --------------------------------
+                # -----------------------------
+                # Governing Law
+                # -----------------------------
                 governing_law = extract_governing_law(
                     self.extracted_text
                 )
@@ -76,9 +73,9 @@ class Contract(models.Model):
                         clause_text=governing_law
                     )
 
-                # --------------------------------
-                # Detect High Risk Keywords
-                # --------------------------------
+                # -----------------------------
+                # Risk Detection
+                # -----------------------------
                 risks = detect_risks(self.extracted_text)
 
                 for risk in risks:
@@ -87,6 +84,21 @@ class Contract(models.Model):
                         contract=self,
                         risk_level="High",
                         description=risk
+                    )
+
+                # -----------------------------
+                # Clause Categorization
+                # -----------------------------
+                categorized = categorize_clauses(
+                    self.extracted_text
+                )
+
+                for clause in categorized:
+
+                    ExtractedClause.objects.create(
+                        contract=self,
+                        clause_type=clause["type"],
+                        clause_text=clause["text"]
                     )
 
             except Exception as e:

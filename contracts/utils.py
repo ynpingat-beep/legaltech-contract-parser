@@ -83,3 +83,45 @@ def detect_risks(text):
             found_risks.append(keyword)
 
     return found_risks
+
+
+# --------------------------------
+# Clause Categorization
+# --------------------------------
+
+def categorize_clauses(text):
+
+    clause_keywords = {
+        "Confidentiality": ["confidential", "non-disclosure"],
+        "Termination": ["terminate", "termination"],
+        "Liability": ["liability", "liable"],
+        "Payment": ["payment", "invoice", "fee"],
+        "Governing Law": ["governing law", "jurisdiction"]
+    }
+
+    clauses = []
+
+    # Split text into sentences
+    sentences = text.split(".")
+
+    for sentence in sentences:
+
+        sentence = sentence.strip()
+
+        if not sentence:
+            continue
+
+        lower_sentence = sentence.lower()
+
+        for clause_type, keywords in clause_keywords.items():
+
+            if any(keyword in lower_sentence for keyword in keywords):
+
+                clauses.append({
+                    "type": clause_type,
+                    "text": sentence
+                })
+
+                break
+
+    return clauses
