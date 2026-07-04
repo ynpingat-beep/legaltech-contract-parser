@@ -1,31 +1,13 @@
 from django.http import HttpResponse
-
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Contract, ExtractedClause
-
-def home(request):
-    return HttpResponse("Contracts App Working!")
 
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from .models import Contract
+from .models import Contract, ExtractedClause
 from .serializers import ContractSerializer
-
-
-@api_view(['POST'])
-@parser_classes([MultiPartParser, FormParser])
-def upload_contract(request):
-
-    serializer = ContractSerializer(data=request.data)
-
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 def home(request):
@@ -44,6 +26,20 @@ def home(request):
             'latest_contract': latest_contract
         }
     )
+
+
+@api_view(['POST'])
+@parser_classes([MultiPartParser, FormParser])
+def upload_contract(request):
+
+    serializer = ContractSerializer(data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 def upload_page(request):
 
@@ -68,7 +64,6 @@ def upload_page(request):
     )
 
 
-
 def contract_list(request):
 
     contracts = Contract.objects.all()
@@ -84,7 +79,8 @@ def contract_list(request):
 
 def contract_detail(request, contract_id):
 
-    contract = Contract.objects.get(
+    contract = get_object_or_404(
+        Contract,
         id=contract_id
     )
 
@@ -98,15 +94,26 @@ def contract_detail(request, contract_id):
         clause_type="Date"
     )
 
+    governing_law = ExtractedClause.objects.filter(
+        contract=contract,
+        clause_type="Governing Law"
+    )
+
+    # ✅ Fetch Risk Flags
+    risks = contract.risks.all()
+
     return render(
         request,
         'contracts/contract_detail.html',
         {
             'contract': contract,
             'organizations': organizations,
-            'dates': dates
+            'dates': dates,
+            'governing_law': governing_law,
+            'risks': risks,
         }
     )
+
 
 def delete_contract(request, pk):
 

@@ -57,3 +57,29 @@ def extract_governing_law(text):
         return match.group(1).strip()
 
     return None
+
+
+
+
+def detect_risks(text):
+
+    risk_keywords = [
+        "indemnify",
+        "unlimited liability",
+        "exclusive",
+        "confidential",
+        "terminate",
+        "breach"
+    ]
+
+    found_risks = []
+
+    lower_text = text.lower()
+
+    for keyword in risk_keywords:
+
+        if keyword in lower_text:
+
+            found_risks.append(keyword)
+
+    return found_risks

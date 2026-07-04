@@ -2,7 +2,8 @@ from django.db import models
 from .utils import (
     extract_text_from_pdf,
     extract_entities,
-    extract_governing_law
+    extract_governing_law,
+    detect_risks
 )
 
 
@@ -32,9 +33,10 @@ class Contract(models.Model):
                 super().save(update_fields=["extracted_text"])
 
                 # --------------------------------
-                # Remove old extracted clauses
+                # Remove old extracted data
                 # --------------------------------
                 self.clauses.all().delete()
+                self.risks.all().delete()
 
                 # --------------------------------
                 # Extract Organizations & Dates
@@ -72,6 +74,19 @@ class Contract(models.Model):
                         contract=self,
                         clause_type="Governing Law",
                         clause_text=governing_law
+                    )
+
+                # --------------------------------
+                # Detect High Risk Keywords
+                # --------------------------------
+                risks = detect_risks(self.extracted_text)
+
+                for risk in risks:
+
+                    RiskFlag.objects.create(
+                        contract=self,
+                        risk_level="High",
+                        description=risk
                     )
 
             except Exception as e:

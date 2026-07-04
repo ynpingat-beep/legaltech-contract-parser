@@ -69,6 +69,56 @@
 
             </ul>
 
+            <!-- Governing Law -->
+
+            <h4>⚖️ Governing Law</h4>
+
+            <ul class="list-group mb-4">
+
+                {% for law in governing_law %}
+
+                    <li class="list-group-item list-group-item-success">
+                        {{ law.clause_text }}
+                    </li>
+
+                {% empty %}
+
+                    <li class="list-group-item text-muted">
+                        Governing law not found.
+                    </li>
+
+                {% endfor %}
+
+            </ul>
+
+            <!-- Risk Flags -->
+
+            <h4>⚠️ High Risk Keywords</h4>
+
+            <ul class="list-group mb-4">
+
+                {% for risk in risks %}
+
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+
+                        {{ risk.description }}
+
+                        <span class="badge bg-danger">
+                            {{ risk.risk_level }}
+                        </span>
+
+                    </li>
+
+                {% empty %}
+
+                    <li class="list-group-item text-muted">
+                        No risks detected.
+                    </li>
+
+                {% endfor %}
+
+            </ul>
+
             <!-- Extracted Text -->
 
             <h4>📄 Extracted Text</h4>
@@ -77,20 +127,6 @@
                  style="max-height:400px; overflow:auto;">
 
                 <pre style="white-space: pre-wrap;">{{ contract.extracted_text }}</pre>
-
-            </div>
-
-            <hr>
-
-            <div class="alert alert-info">
-
-                <strong>🚧 Coming in Week 3</strong>
-
-                <ul class="mb-0">
-                    <li>⚖ Governing Law Detection</li>
-                    <li>⚠ Risk Flag Detection</li>
-                    <li>📑 Clause Categorization</li>
-                </ul>
 
             </div>
 
