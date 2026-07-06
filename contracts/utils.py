@@ -90,6 +90,10 @@ def extract_governing_law(text):
 
 
 def detect_risks(text):
+    """
+    Detect risky clauses and return the full sentence
+    containing the risky keyword.
+    """
 
     risk_keywords = [
         "indemnify",
@@ -100,17 +104,27 @@ def detect_risks(text):
         "breach"
     ]
 
-    found_risks = []
+    risk_sentences = []
 
-    lower_text = text.lower()
+    # Split into sentences
+    sentences = re.split(r'(?<=[.!?])\s+', text)
 
-    for keyword in risk_keywords:
+    for sentence in sentences:
 
-        if keyword in lower_text:
+        lower_sentence = sentence.lower()
 
-            found_risks.append(keyword)
+        for keyword in risk_keywords:
 
-    return found_risks
+            if keyword in lower_sentence:
+
+                risk_sentences.append({
+                    "level": "High",
+                    "description": sentence.strip()
+                })
+
+                break
+
+    return risk_sentences
 
 
 # --------------------------------

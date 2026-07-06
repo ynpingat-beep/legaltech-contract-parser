@@ -82,8 +82,9 @@ class Contract(models.Model):
 
                     RiskFlag.objects.create(
                         contract=self,
-                        risk_level="High",
-                        description=risk
+                        risk_level=risk["level"],
+                        description=risk["description"]
+        
                     )
 
                 # -----------------------------
