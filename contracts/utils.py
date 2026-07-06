@@ -1,8 +1,10 @@
-import fitz, spacy, re 
-
+import fitz
+import spacy
+import re
 
 # Load spaCy English model
 nlp = spacy.load("en_core_web_sm")
+
 
 def extract_text_from_pdf(pdf_path):
     text = ""
@@ -20,9 +22,11 @@ def extract_text_from_pdf(pdf_path):
 
     return text
 
+
 def extract_entities(text):
     """
     Extract organizations and dates using spaCy NER.
+    Filters common false positives.
     """
 
     doc = nlp(text)
@@ -30,17 +34,43 @@ def extract_entities(text):
     organizations = set()
     dates = set()
 
+    ignored_organizations = {
+        "NDA",
+        "Agreement",
+        "Contract",
+        "The Effective Date",
+        "Effective Date",
+        "Party",
+        "Receiving Party",
+        "Disclosing Party"
+    }
+
     for ent in doc.ents:
 
+        value = ent.text.strip()
+
         if ent.label_ == "ORG":
-            organizations.add(ent.text.strip())
+
+            if value in ignored_organizations:
+                continue
+
+            # Ignore very short names
+            if len(value) < 4:
+                continue
+
+            organizations.add(value)
 
         elif ent.label_ == "DATE":
-            dates.add(ent.text.strip())
+
+            # Ignore relative durations
+            if "days" in value.lower():
+                continue
+
+            dates.add(value)
 
     return {
-        "organizations": sorted(list(organizations)),
-        "dates": sorted(list(dates))
+        "organizations": sorted(organizations),
+        "dates": sorted(dates)
     }
 
 
@@ -57,8 +87,6 @@ def extract_governing_law(text):
         return match.group(1).strip()
 
     return None
-
-
 
 
 def detect_risks(text):
@@ -101,7 +129,6 @@ def categorize_clauses(text):
 
     clauses = []
 
-    # Split text into sentences
     sentences = text.split(".")
 
     for sentence in sentences:
