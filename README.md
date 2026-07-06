@@ -162,25 +162,28 @@ GET /api/contracts/<id>/
 
 ### Home Dashboard
 
-_Add Screenshot_
+
+
+![alt text](image.png)
 
 ### Upload Page
 
-_Add Screenshot_
+![alt text](image-1.png)
 
 ### Contract Analysis
 
-_Add Screenshot_
+![alt text](image-2.png)
+![alt text](image-3.png)
+
 
 ### Django Admin
 
-_Add Screenshot_
+![alt text](image-4.png)
 
 ---
 
 ## 📌 Future Improvements
 
-- PostgreSQL Integration
 - OCR Support for Scanned PDFs
 - AI-powered Clause Summarization
 - Contract Comparison
