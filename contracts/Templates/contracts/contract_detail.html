@@ -11,120 +11,213 @@
 
 <body class="bg-light">
 
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
 
-    <div class="card shadow">
+    <h2 class="mb-3">{{ contract.title }}</h2>
+
+    <p class="text-muted">
+        Uploaded on {{ contract.uploaded_at }}
+    </p>
+
+    <!-- Summary Row -->
+
+    <div class="row">
+
+        <!-- Organizations -->
+
+        <div class="col-md-6 mb-4">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-header bg-primary text-white">
+                    🏢 Organizations
+                </div>
+
+                <div class="card-body">
+
+                    <ul class="list-group list-group-flush">
+
+                        {% for org in organizations %}
+
+                            <li class="list-group-item">
+                                {{ org.clause_text }}
+                            </li>
+
+                        {% empty %}
+
+                            <li class="list-group-item text-muted">
+                                No organizations found.
+                            </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Dates -->
+
+        <div class="col-md-6 mb-4">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-header bg-success text-white">
+                    📅 Important Dates
+                </div>
+
+                <div class="card-body">
+
+                    <ul class="list-group list-group-flush">
+
+                        {% for date in dates %}
+
+                            <li class="list-group-item">
+                                {{ date.clause_text }}
+                            </li>
+
+                        {% empty %}
+
+                            <li class="list-group-item text-muted">
+                                No dates found.
+                            </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Governing Law -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header bg-warning">
+
+            ⚖ Governing Law
+
+        </div>
 
         <div class="card-body">
 
-            <h2>{{ contract.title }}</h2>
+            {% for law in governing_law %}
 
-            <p class="text-muted">
-                Uploaded on: {{ contract.uploaded_at }}
-            </p>
+                <span class="badge bg-success fs-6">
+                    {{ law.clause_text }}
+                </span>
 
-            <hr>
+            {% empty %}
 
-            <!-- Organizations -->
+                <p class="text-muted mb-0">
+                    Governing law not found.
+                </p>
 
-            <h4>🏢 Organizations</h4>
+            {% endfor %}
 
-            <ul class="list-group mb-4">
+        </div>
 
-                {% for org in organizations %}
+    </div>
 
-                    <li class="list-group-item">
-                        {{ org.clause_text }}
-                    </li>
+    <!-- Risk Flags -->
 
-                {% empty %}
+    <div class="card shadow-sm mb-4">
 
-                    <li class="list-group-item text-muted">
-                        No organizations found.
-                    </li>
+        <div class="card-header bg-danger text-white">
 
-                {% endfor %}
+            ⚠ High Risk Clauses
 
-            </ul>
+        </div>
 
-            <!-- Dates -->
+        <div class="card-body">
 
-            <h4>📅 Important Dates</h4>
+            {% for risk in risks %}
 
-            <ul class="list-group mb-4">
+                <div class="alert alert-danger">
 
-                {% for date in dates %}
+                    <strong>{{ risk.risk_level }}</strong>
 
-                    <li class="list-group-item">
-                        {{ date.clause_text }}
-                    </li>
+                    <hr>
 
-                {% empty %}
+                    {{ risk.description }}
 
-                    <li class="list-group-item text-muted">
-                        No dates found.
-                    </li>
+                </div>
 
-                {% endfor %}
+            {% empty %}
 
-            </ul>
+                <p class="text-muted">
+                    No risks detected.
+                </p>
 
-            <!-- Governing Law -->
+            {% endfor %}
 
-            <h4>⚖️ Governing Law</h4>
+        </div>
 
-            <ul class="list-group mb-4">
+    </div>
 
-                {% for law in governing_law %}
+    <!-- Categorized Clauses -->
 
-                    <li class="list-group-item list-group-item-success">
-                        {{ law.clause_text }}
-                    </li>
+    <div class="card shadow-sm mb-4">
 
-                {% empty %}
+        <div class="card-header bg-info text-white">
 
-                    <li class="list-group-item text-muted">
-                        Governing law not found.
-                    </li>
+            📑 Categorized Clauses
 
-                {% endfor %}
+        </div>
 
-            </ul>
+        <div class="card-body">
 
-            <!-- Risk Flags -->
+            {% for clause in categorized_clauses %}
 
-            <h4>⚠️ High Risk Keywords</h4>
+                <div class="mb-3">
 
-            <ul class="list-group mb-4">
+                    <span class="badge bg-primary">
+                        {{ clause.clause_type }}
+                    </span>
 
-                {% for risk in risks %}
+                    <p class="mt-2 mb-0">
+                        {{ clause.clause_text }}
+                    </p>
 
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                </div>
 
-                        {{ risk.description }}
+                <hr>
 
-                        <span class="badge bg-danger">
-                            {{ risk.risk_level }}
-                        </span>
+            {% empty %}
 
-                    </li>
+                <p class="text-muted">
+                    No categorized clauses found.
+                </p>
 
-                {% empty %}
+            {% endfor %}
 
-                    <li class="list-group-item text-muted">
-                        No risks detected.
-                    </li>
+        </div>
 
-                {% endfor %}
+    </div>
 
-            </ul>
+    <!-- Extracted Text -->
 
-            <!-- Extracted Text -->
+    <div class="card shadow-sm">
 
-            <h4>📄 Extracted Text</h4>
+        <div class="card-header bg-dark text-white">
 
-            <div class="border rounded p-3 bg-light"
-                 style="max-height:400px; overflow:auto;">
+            📄 Extracted Contract Text
+
+        </div>
+
+        <div class="card-body">
+
+            <div
+                style="max-height:450px;overflow:auto;"
+                class="border rounded p-3 bg-light">
 
                 <pre style="white-space: pre-wrap;">{{ contract.extracted_text }}</pre>
 
@@ -134,7 +227,7 @@
 
     </div>
 
-    <a href="/contracts/" class="btn btn-secondary mt-3">
+    <a href="/contracts/" class="btn btn-secondary mt-4">
 
         ← Back to Contracts
 

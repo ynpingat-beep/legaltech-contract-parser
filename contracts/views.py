@@ -99,7 +99,19 @@ def contract_detail(request, contract_id):
         clause_type="Governing Law"
     )
 
+    # Risk Flags
     risks = contract.risks.all()
+
+    # Categorized Clauses
+    categorized_clauses = ExtractedClause.objects.exclude(
+        clause_type__in=[
+            "Organization",
+            "Date",
+            "Governing Law"
+        ]
+    ).filter(
+        contract=contract
+    )
 
     return render(
         request,
@@ -110,6 +122,7 @@ def contract_detail(request, contract_id):
             'dates': dates,
             'governing_law': governing_law,
             'risks': risks,
+            'categorized_clauses': categorized_clauses,
         }
     )
 
