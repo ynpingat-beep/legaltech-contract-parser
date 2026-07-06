@@ -99,7 +99,6 @@ def contract_detail(request, contract_id):
         clause_type="Governing Law"
     )
 
-    # ✅ Fetch Risk Flags
     risks = contract.risks.all()
 
     return render(
@@ -125,3 +124,33 @@ def delete_contract(request, pk):
     contract.delete()
 
     return redirect('contract_list')
+
+
+# ===================================================
+# WEEK 4 REST API
+# ===================================================
+
+@api_view(['GET'])
+def contract_list_api(request):
+
+    contracts = Contract.objects.all()
+
+    serializer = ContractSerializer(
+        contracts,
+        many=True
+    )
+
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def contract_detail_api(request, pk):
+
+    contract = get_object_or_404(
+        Contract,
+        pk=pk
+    )
+
+    serializer = ContractSerializer(contract)
+
+    return Response(serializer.data)

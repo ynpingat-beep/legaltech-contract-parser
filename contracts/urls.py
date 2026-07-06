@@ -1,64 +1,66 @@
 from django.urls import path
 from . import views
-from .views import*
-
-urlpatterns = [
-    path('api/upload/', views.upload_contract, name='upload-contract'),
-]
-
-
-from .views import (
-    home,
-    upload_page,
-    contract_list,
-    contract_detail
-)
-
 
 urlpatterns = [
 
+    # Home Page
     path(
         '',
-        home,
+        views.home,
         name='home'
     ),
 
+    # Upload Contract (HTML)
     path(
         'upload/',
-        upload_page,
+        views.upload_page,
         name='upload_page'
     ),
 
+    # Upload Contract (API)
+    path(
+        'api/upload/',
+        views.upload_contract,
+        name='upload_contract'
+    ),
+
+    # Contract List
     path(
         'contracts/',
-        contract_list,
+        views.contract_list,
         name='contract_list'
     ),
 
+    # Contract Details
     path(
         'contracts/<int:contract_id>/',
-        contract_detail,
+        views.contract_detail,
         name='contract_detail'
     ),
 
+    # Delete Contract
     path(
         'delete/<int:pk>/',
-        delete_contract,
+        views.delete_contract,
         name='delete_contract'
     ),
 
+    # -----------------------
+    # NEW WEEK 4 API
+    # -----------------------
+
+    # List all contracts
+    path(
+        'api/contracts/',
+        views.contract_list_api,
+        name='contract_list_api'
+    ),
+
+    # Get one analyzed contract
+    path(
+        'api/contracts/<int:pk>/',
+        views.contract_detail_api,
+        name='contract_detail_api'
+    ),
+
 ]
-
-
-
-path(
-    'delete/<int:pk>/',
-    delete_contract,
-    name='delete_contract'
-)
-
-path(
-    'contracts/<int:pk>/',
-    views.contract_detail,
-    name='contract_detail'
-),
